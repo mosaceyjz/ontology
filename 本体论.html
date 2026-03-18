@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 领域中的本体论与智能制造</title>
+  
+  <!-- 引入 Tailwind CSS 用于快速处理样式 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 引入 React 和 ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  
+  <!-- 引入 Babel 用于在浏览器中编译 JSX 语法 -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* 自定义一点平滑的动画效果 */
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    .slide-up { animation: slideUp 0.5s ease-out forwards; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-slate-50">
+
+  <!-- React 应用挂载点 -->
+  <div id="root"></div>
+
+  <!-- React 业务逻辑代码 -->
+  <script type="text/babel">
+    const { useState } = React;
+
+    // --- 内置图标组件 (替换原有的 lucide-react，确保单文件完美运行) ---
+    const IconBrain = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/></svg>);
+    const IconNetwork = ({ className, size=24 }) => (<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/></svg>);
+    const IconDatabase = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>);
+    const IconCpu = ({ className, size=24 }) => (<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>);
+    const IconFactory = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg>);
+    const IconSettings = ({ className, size=24 }) => (<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>);
+    const IconAlertTriangle = ({ className, size=24 }) => (<svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>);
+    const IconGitMerge = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>);
+    const IconLightbulb = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.2 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>);
+
+    const App = () => {
+      const [activeTab, setActiveTab] = useState('concept');
+
+      return (
+        <div className="min-h-screen p-4 md:p-8 font-sans text-slate-800 flex justify-center">
+          <div className="max-w-4xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            
+            {/* Header */}
+            <div className="bg-gradient-to-r from-indigo-600 to-blue-500 p-8 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+                <IconNetwork size={250} />
+              </div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-2">
+                  <IconBrain className="w-8 h-8 text-indigo-200" />
+                  <h2 className="text-indigo-200 font-semibold tracking-wider text-sm">AI 核心概念指南</h2>
+                </div>
+                <h1 className="text-4xl font-bold mb-4">AI 领域中的本体论 (Ontology)</h1>
+                <p className="text-lg text-blue-50 max-w-2xl leading-relaxed">
+                  如果说数据是 AI 的“燃料”，那么本体论就是 AI 理解世界的“字典和逻辑蓝图”。它让机器从“只会处理字符串”进化为“真正理解事物及其关系”。
+                </p>
+              </div>
+            </div>
+
+            {/* Tab Navigation */}
+            <div className="flex border-b border-slate-200 bg-slate-50">
+              <button 
+                onClick={() => setActiveTab('concept')}
+                className={`flex-1 py-4 px-6 font-medium text-lg transition-colors flex items-center justify-center gap-2 ${
+                  activeTab === 'concept' 
+                    ? 'bg-white text-indigo-600 border-b-2 border-indigo-600' 
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <IconNetwork className="w-5 h-5" />
+                1. 什么是AI本体论？
+              </button>
+              <button 
+                onClick={() => setActiveTab('application')}
+                className={`flex-1 py-4 px-6 font-medium text-lg transition-colors flex items-center justify-center gap-2 ${
+                  activeTab === 'application' 
+                    ? 'bg-white text-blue-600 border-b-2 border-blue-600' 
+                    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <IconFactory className="w-5 h-5" />
+                2. 智能制造中的应用
+              </button>
+            </div>
+
+            {/* Content Area */}
+            <div className="p-8 min-h-[500px]">
+              
+              {/* Section 1: Concept */}
+              {activeTab === 'concept' && (
+                <div className="space-y-8 fade-in slide-up">
+                  
+                  <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 flex items-start gap-4">
+                    <IconLightbulb className="w-8 h-8 text-indigo-600 flex-shrink-0 mt-1" />
+                    <div>
+                      <h3 className="text-xl font-bold text-indigo-900 mb-2">大白话解释</h3>
+                      <p className="text-slate-700 leading-relaxed">
+                        传统的数据库只记录：<code className="bg-white px-2 py-1 rounded text-sm mx-1 text-slate-600">ID:001, Temp:85</code>。AI不知道这代表什么。<br/>
+                        加入<strong>本体论</strong>后，AI被赋予了背景知识：<br/>
+                        <span className="font-semibold text-indigo-700">“ID:001是一台[主轴电机]，Temp是指[温度]。规则：如果[电机]的[温度]超过80度，说明处于[过热异常]状态。”</span><br/>
+                        这就是本体论——构建知识图谱的基石。
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                      <IconDatabase className="w-6 h-6 text-indigo-500" />
+                      AI本体论的三大基石
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 text-xl font-bold">1</div>
+                        <h4 className="text-lg font-bold mb-2">概念 / 实体 (Classes)</h4>
+                        <p className="text-slate-600 text-sm">定义世界里有什么。比如：传感器、机器人、订单、工人。</p>
+                      </div>
+                      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-4 text-xl font-bold">2</div>
+                        <h4 className="text-lg font-bold mb-2">关系 (Relations)</h4>
+                        <p className="text-slate-600 text-sm">事物之间如何连接。比如：机器人 [安装在] 流水线，传感器 [监测] 机器人。</p>
+                      </div>
+                      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-4 text-xl font-bold">3</div>
+                        <h4 className="text-lg font-bold mb-2">属性 (Attributes)</h4>
+                        <p className="text-slate-600 text-sm">事物的具体特征。比如：机器人的 [最大负载=50kg]，订单的 [截止日期]。</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Visual Graph Example */}
+                  <div className="bg-slate-900 rounded-xl p-8 text-white relative overflow-hidden">
+                    <h4 className="text-sm font-semibold text-slate-400 mb-6 uppercase tracking-wider">AI眼中的制造世界模型 (简化图谱)</h4>
+                    <div className="relative h-48 flex items-center justify-center">
+                      <div className="absolute left-10 md:left-20 flex flex-col items-center">
+                        <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center border-4 border-slate-800 z-10 shadow-lg">
+                          <IconCpu size={32} />
+                        </div>
+                        <span className="mt-2 font-medium">设备实体</span>
+                        <span className="text-xs text-blue-300">(如：数控机床)</span>
+                      </div>
+                      <div className="absolute right-10 md:right-20 flex flex-col items-center">
+                        <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center border-4 border-slate-800 z-10 shadow-lg">
+                          <IconSettings size={32} />
+                        </div>
+                        <span className="mt-2 font-medium">加工工序</span>
+                        <span className="text-xs text-green-300">(如：铣削)</span>
+                      </div>
+                      <div className="absolute top-0 flex flex-col items-center">
+                        <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center border-4 border-slate-800 z-10 shadow-lg">
+                          <IconAlertTriangle size={24} />
+                        </div>
+                        <span className="mt-2 font-medium text-sm">异常状态</span>
+                      </div>
+                      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+                        <line x1="25%" y1="50%" x2="75%" y2="50%" stroke="#475569" strokeWidth="2" strokeDasharray="5,5" />
+                        <text x="50%" y="45%" fill="#94a3b8" fontSize="12" textAnchor="middle">执行 (executes)</text>
+                        <line x1="25%" y1="50%" x2="50%" y2="15%" stroke="#475569" strokeWidth="2" strokeDasharray="5,5" />
+                        <text x="35%" y="25%" fill="#94a3b8" fontSize="12" textAnchor="middle">触发 (triggers)</text>
+                      </svg>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
+              {/* Section 2: Application */}
+              {activeTab === 'application' && (
+                <div className="space-y-6 fade-in slide-up">
+                  
+                  <div className="mb-8">
+                    <h3 className="text-2xl font-bold text-slate-800 mb-2">本体论赋能“认知型”智能制造</h3>
+                    <p className="text-slate-600">通过赋予机器“理解”能力，AI本体论在制造管理中催生了以下高级应用：</p>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all">
+                    <div className="bg-blue-100 text-blue-600 p-4 rounded-full h-fit">
+                      <IconGitMerge className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-800 mb-2">1. 认知数字孪生 (Cognitive Digital Twin)</h4>
+                      <p className="text-slate-600 mb-3">传统的数字孪生只是 3D 模型和数据面板。结合本体论后，数字孪生拥有了“逻辑”。</p>
+                      <div className="bg-slate-50 p-3 rounded border border-slate-100 text-sm text-slate-700">
+                        <strong>AI推理场景：</strong> 当传感器A报错，AI通过本体图谱不仅知道A坏了，还能沿着关系链条推理出：A属于部件B，B影响流水线C，最终预测这会导致“订单#998”延期交货。
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-xl border border-slate-200 hover:border-emerald-400 hover:shadow-md transition-all">
+                    <div className="bg-emerald-100 text-emerald-600 p-4 rounded-full h-fit">
+                      <IconNetwork className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-800 mb-2">2. 语义互操作性 (打破数据孤岛)</h4>
+                      <p className="text-slate-600 mb-3">ERP叫“物料”，MES叫“BOM”，设备叫“Part”。本体论建立了一个“通用翻译官”。</p>
+                      <div className="bg-slate-50 p-3 rounded border border-slate-100 text-sm text-slate-700">
+                        <strong>AI推理场景：</strong> 无论底层系统叫什么名字，AI通过本体映射，将其统一识别为“制造资源”。当设计图纸变更时，AI能跨系统自动更新采购需求和机床加工程序。
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col md:flex-row gap-6 bg-white p-6 rounded-xl border border-slate-200 hover:border-amber-400 hover:shadow-md transition-all">
+                    <div className="bg-amber-100 text-amber-600 p-4 rounded-full h-fit">
+                      <IconSettings className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-800 mb-2">3. 动态柔性排产 (智能决策)</h4>
+                      <p className="text-slate-600 mb-3">基于能力本体 (Capability Ontology)，机器自己“知道”自己能干什么。</p>
+                      <div className="bg-slate-50 p-3 rounded border border-slate-100 text-sm text-slate-700">
+                        <strong>AI推理场景：</strong> 一台铣床突然故障。AI查询本体库寻找替代。AI自主发现一条平时用于装配的复合机器人可以胜任铣削，瞬间完成重新排产任务。
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+            
+            {/* Footer */}
+            <div className="bg-slate-100 p-6 text-center text-sm text-slate-500 border-t border-slate-200">
+              <p>核心总结：本体论是将人类的<strong>领域专家知识</strong>编码成<strong>机器可读逻辑</strong>的桥梁，是AI从“感知”走向“认知”的关键。</p>
+            </div>
+
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
